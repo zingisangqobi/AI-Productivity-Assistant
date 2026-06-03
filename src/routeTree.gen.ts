@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TasksRouteImport } from './routes/tasks'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ResearchRouteImport } from './routes/research'
 import { Route as MeetingsRouteImport } from './routes/meetings'
 import { Route as EmailRouteImport } from './routes/email'
@@ -21,6 +22,11 @@ import { Route as ApiChatRouteImport } from './routes/api/chat'
 const TasksRoute = TasksRouteImport.update({
   id: '/tasks',
   path: '/tasks',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResearchRoute = ResearchRouteImport.update({
@@ -64,6 +70,7 @@ export interface FileRoutesByFullPath {
   '/email': typeof EmailRoute
   '/meetings': typeof MeetingsRoute
   '/research': typeof ResearchRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tasks': typeof TasksRoute
   '/api/chat': typeof ApiChatRoute
   '/chat/$threadId': typeof ChatThreadIdRoute
@@ -74,6 +81,7 @@ export interface FileRoutesByTo {
   '/email': typeof EmailRoute
   '/meetings': typeof MeetingsRoute
   '/research': typeof ResearchRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tasks': typeof TasksRoute
   '/api/chat': typeof ApiChatRoute
   '/chat/$threadId': typeof ChatThreadIdRoute
@@ -85,6 +93,7 @@ export interface FileRoutesById {
   '/email': typeof EmailRoute
   '/meetings': typeof MeetingsRoute
   '/research': typeof ResearchRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tasks': typeof TasksRoute
   '/api/chat': typeof ApiChatRoute
   '/chat/$threadId': typeof ChatThreadIdRoute
@@ -97,6 +106,7 @@ export interface FileRouteTypes {
     | '/email'
     | '/meetings'
     | '/research'
+    | '/sitemap.xml'
     | '/tasks'
     | '/api/chat'
     | '/chat/$threadId'
@@ -107,6 +117,7 @@ export interface FileRouteTypes {
     | '/email'
     | '/meetings'
     | '/research'
+    | '/sitemap.xml'
     | '/tasks'
     | '/api/chat'
     | '/chat/$threadId'
@@ -117,6 +128,7 @@ export interface FileRouteTypes {
     | '/email'
     | '/meetings'
     | '/research'
+    | '/sitemap.xml'
     | '/tasks'
     | '/api/chat'
     | '/chat/$threadId'
@@ -128,6 +140,7 @@ export interface RootRouteChildren {
   EmailRoute: typeof EmailRoute
   MeetingsRoute: typeof MeetingsRoute
   ResearchRoute: typeof ResearchRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TasksRoute: typeof TasksRoute
   ApiChatRoute: typeof ApiChatRoute
   ChatThreadIdRoute: typeof ChatThreadIdRoute
@@ -141,6 +154,13 @@ declare module '@tanstack/react-router' {
       path: '/tasks'
       fullPath: '/tasks'
       preLoaderRoute: typeof TasksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/research': {
@@ -200,6 +220,7 @@ const rootRouteChildren: RootRouteChildren = {
   EmailRoute: EmailRoute,
   MeetingsRoute: MeetingsRoute,
   ResearchRoute: ResearchRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   TasksRoute: TasksRoute,
   ApiChatRoute: ApiChatRoute,
   ChatThreadIdRoute: ChatThreadIdRoute,
@@ -208,3 +229,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
